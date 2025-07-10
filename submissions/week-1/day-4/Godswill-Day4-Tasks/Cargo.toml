@@ -1,6 +1,0 @@
-[package]
-name = "godswill_day4_tasks"
-version = "0.1.0"
-edition = "2024"
-
-[dependencies]

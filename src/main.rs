@@ -193,4 +193,4 @@ fn main() {
     println!("📊 Total volume of all boxes: {:.2} cm³", total_volume);
     
     println!("\n✅ All tasks completed successfully! 🎉");
-}
+} 
