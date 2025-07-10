@@ -3,7 +3,6 @@ enum ItemType {
     Book,
     Magazine,
     Fiction,
-    NonFiction,
 }
 
 struct LibraryItem {
