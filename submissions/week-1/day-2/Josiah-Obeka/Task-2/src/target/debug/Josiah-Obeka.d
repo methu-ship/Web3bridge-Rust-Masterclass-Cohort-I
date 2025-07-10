@@ -1,1 +1,0 @@
-/Users/josiah/Desktop/rust-bootcamp/Web3bridge-Rust-Masterclass-Cohort-I/submissions/week-1/day-2/Josiah-Obeka/target/debug/Josiah-Obeka: /Users/josiah/Desktop/rust-bootcamp/Web3bridge-Rust-Masterclass-Cohort-I/submissions/week-1/day-2/Josiah-Obeka/src/main.rs
