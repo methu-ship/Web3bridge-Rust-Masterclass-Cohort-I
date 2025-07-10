@@ -116,4 +116,6 @@ typings/
 # Temporary files
 *.tmp
 *.temp
-/target
+
+# target folder
+*target
