@@ -1,1 +1,0 @@
-/home/nanle/Desktop/web3bridge_masterclass/Web3bridge-Rust-Masterclass-Cohort-I/submissions/week-1/day-5/Nanle_Nathaniel/task-2/target/debug/task-2: /home/nanle/Desktop/web3bridge_masterclass/Web3bridge-Rust-Masterclass-Cohort-I/submissions/week-1/day-5/Nanle_Nathaniel/task-2/src/main.rs
