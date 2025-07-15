@@ -1,0 +1,1 @@
+/Users/mac/Documents/Web3bridge-Rust-Masterclass-Cohort-I/submissions/week-2/day-2/omemgboji-emmanuel/target/debug/omemgboji-emmanuel: /Users/mac/Documents/Web3bridge-Rust-Masterclass-Cohort-I/submissions/week-2/day-2/omemgboji-emmanuel/src/lib.rs /Users/mac/Documents/Web3bridge-Rust-Masterclass-Cohort-I/submissions/week-2/day-2/omemgboji-emmanuel/src/main.rs
