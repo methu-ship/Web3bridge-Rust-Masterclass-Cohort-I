@@ -4,9 +4,9 @@ use lib::*;
 fn main() {
     let mut cms = ClassManagement::initialize();
 
-    cms.register_std("Tammy".to_string(), "9th Grade".to_string());
-    cms.register_std("Jane".to_string(), "10th Grade".to_string());
-    cms.register_std("Mike".to_string(), "11th Grade".to_string());
+    cms.register_std("Tammy".to_string(), 89);
+    cms.register_std("Jane".to_string(), 23);
+    cms.register_std("Mike".to_string(), 50);
 
     println!("Registered 3 students");
 

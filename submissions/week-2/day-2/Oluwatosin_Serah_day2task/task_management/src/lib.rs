@@ -7,7 +7,7 @@ pub enum StudentStatus {
 #[derive(Clone, Debug)]
 pub struct Student {
     pub name: String,
-    pub grade: String,
+    pub grade: u32,
     pub status: StudentStatus,
 }
 
@@ -26,7 +26,7 @@ impl ClassManagement {
         self.students.push(student);
     }
 
-    pub fn register_std(&mut self, name: String, grade: String) {
+    pub fn register_std(&mut self, name: String, grade: u32) {
         let student = Student {
             name,
             grade,
@@ -75,7 +75,7 @@ mod tests {
 
         let student = Student {
             name: "Ajala Victor".to_string(),
-            grade: "10th Grade".to_string(),
+            grade: 10,
             status: StudentStatus::Active,
         };
 
@@ -89,7 +89,7 @@ mod tests {
         assert!(cms.students.len() == 0);
 
         let name = " Serah Oluwatosin".to_string();
-        let grade = "Ist Grade".to_string();
+        let grade = 95;
 
         cms.register_std(name, grade);
         assert!(cms.students.len() == 1);
@@ -102,21 +102,21 @@ mod tests {
         assert!(cms.students.len() == 0);
 
         let name = "Blessing".to_string();
-        let grade = "11th Grade".to_string();
+        let grade = 100;
 
         cms.register_std(name, grade);
 
         let student = cms.view_student(0);
 
         assert_eq!(student.name, "Blessing".to_string());
-        assert_eq!(student.grade, "11th Grade".to_string());
+        assert_eq!(student.grade, 100);
         assert_eq!(student.status, StudentStatus::Active);
     }
 
     #[test]
     fn test_update_student_status() {
         let mut cms = ClassManagement::initialize();
-        cms.register_std("Johnson".to_string(), "9th Grade".to_string());
+        cms.register_std("Johnson".to_string(), 67);
 
         let success = cms.update_student_status(0, StudentStatus::Inactive);
         assert!(success);
@@ -128,8 +128,8 @@ mod tests {
     #[test]
     fn test_delete_student() {
         let mut cms = ClassManagement::initialize();
-        cms.register_std("Janet".to_string(), "10th Grade".to_string());
-        cms.register_std("Johnson".to_string(), "9th Grade".to_string());
+        cms.register_std("Janet".to_string(), 89);
+        cms.register_std("Johnson".to_string(), 40);
 
         assert_eq!(cms.students.len(), 2);
 
@@ -138,13 +138,13 @@ mod tests {
         assert_eq!(cms.students.len(), 1);
 
         let remaining_student = cms.view_student(0);
-        assert_eq!(remaining_student.name, "Bob Johnson");
+        assert_eq!(remaining_student.name, "Johnson");
     }
 
     #[test]
     fn test_delete_student_out_of_bounds() {
         let mut cms = ClassManagement::initialize();
-        cms.register_std("Alice Smith".to_string(), "10th Grade".to_string());
+        cms.register_std("Alice Smith".to_string(), 50);
 
         let success = cms.delete_student(5);
         assert!(!success);
