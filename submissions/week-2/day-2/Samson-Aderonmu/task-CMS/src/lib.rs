@@ -1,17 +1,17 @@
 
+#[derive(Clone, PartialEq, Debug)]
+
+pub enum StudentStatus {
+    Active,
+    Inactive,
+}
+
 #[derive(Clone)]
-
-
-
 pub struct Student {
-  
     pub id: u32,
-   
     pub name: String,
-  
     pub grade: u8,
-   
-    pub is_active: bool,
+    pub status: StudentStatus,
 }
 
 
@@ -42,7 +42,7 @@ impl ClassManagement {
             id: (self.students.len() + 1) as u32, 
             name,        
             grade,       
-            is_active: true,  
+            status: StudentStatus::Active,  
         };
        
         self.students.push(student);
@@ -72,7 +72,7 @@ impl ClassManagement {
         }
     }
     
-    pub fn edit_student(&mut self, index: usize, name: Option<String>, grade: Option<u8>, is_active: Option<bool>) {
+    pub fn edit_student(&mut self, index: usize, name: Option<String>, grade: Option<u8>, status: Option<StudentStatus>) {
         if index < self.students.len() {
             let student = &mut self.students[index];
             
@@ -84,15 +84,15 @@ impl ClassManagement {
                 student.grade = new_grade;
             }
             
-            if let Some(new_status) = is_active {
-                student.is_active = new_status;
+            if let Some(new_status) = status {
+                student.status = new_status;
             }
         }
     }
 
-     pub fn update_student_status(&mut self, index: usize, is_active: bool) {
+     pub fn update_student_status(&mut self, index: usize, status: StudentStatus) {
         if index < self.students.len() {
-            self.students[index].is_active = is_active;
+            self.students[index].status = status;
         }
     }
  
@@ -104,7 +104,7 @@ impl ClassManagement {
 
      pub fn get_active_students(&self) -> Vec<Student> {
         self.students.iter()
-            .filter(|student| student.is_active)
+            .filter(|student| student.status == StudentStatus::Active)
             .cloned()
             .collect()
     }
@@ -131,7 +131,7 @@ mod tests {
             id: 1,
             name: "John Doe".to_string(),
             grade: 10,
-            is_active: true,
+            status: StudentStatus::Active,
         };
         
        
@@ -184,7 +184,7 @@ mod tests {
         let student = class.fetch_student(0);
         assert_eq!(student.name, "John Doe");
         assert_eq!(student.grade, 10);
-        assert_eq!(student.is_active, true);
+        assert_eq!(student.status, StudentStatus::Active);
     }
 
 }
