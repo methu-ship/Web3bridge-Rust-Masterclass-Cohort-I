@@ -104,3 +104,95 @@ impl ClassManagementSystem {
 
         Ok(student_id)
     }
+
+    // Function to edit student information
+    pub fn edit_student(
+        &mut self,
+        id: u32,
+        name: Option<String>,
+        grade: Option<String>,
+        status: Option<StudentStatus>,
+    ) -> Result<(), ClassManagementError> {
+        let student = self
+            .students
+            .get_mut(&id)
+            .ok_or(ClassManagementError::StudentNotFound)?;
+
+        if let Some(new_name) = name {
+            if new_name.trim().is_empty() {
+                return Err(ClassManagementError::InvalidName);
+            }
+            student.name = new_name.trim().to_string();
+        }
+
+        if let Some(new_grade) = grade {
+            if new_grade.trim().is_empty() {
+                return Err(ClassManagementError::InvalidGrade);
+            }
+            student.grade = new_grade.trim().to_string();
+        }
+
+        if let Some(new_status) = status {
+            student.status = new_status;
+        }
+
+        Ok(())
+    }
+
+    // Function to update student status
+    pub fn update_student_status(
+        &mut self,
+        id: u32,
+        status: StudentStatus,
+    ) -> Result<(), ClassManagementError> {
+        let student = self
+            .students
+            .get_mut(&id)
+            .ok_or(ClassManagementError::StudentNotFound)?;
+        student.status = status;
+        Ok(())
+    }
+
+    // Function to delete a student
+    pub fn delete_student(&mut self, id: u32) -> Result<Student, ClassManagementError> {
+        self.students
+            .remove(&id)
+            .ok_or(ClassManagementError::StudentNotFound)
+    }
+
+    // Function to view a specific student
+    pub fn view_student(&self, id: u32) -> Result<&Student, ClassManagementError> {
+        self.students
+            .get(&id)
+            .ok_or(ClassManagementError::StudentNotFound)
+    }
+
+    // Function to view all students
+    pub fn view_all_students(&self) -> Vec<&Student> {
+        self.students.values().collect()
+    }
+
+    // Function to view students by status
+    pub fn view_students_by_status(&self, status: StudentStatus) -> Vec<&Student> {
+        self.students
+            .values()
+            .filter(|student| student.status == status)
+            .collect()
+    }
+
+    // Function to get the total number of students
+    pub fn student_count(&self) -> usize {
+        self.students.len()
+    }
+
+    // Function to check if a student exists
+    pub fn student_exists(&self, id: u32) -> bool {
+        self.students.contains_key(&id)
+    }
+}
+
+impl Default for ClassManagementSystem {
+    fn default() -> Self {
+        Self::new()
+    }
+}
