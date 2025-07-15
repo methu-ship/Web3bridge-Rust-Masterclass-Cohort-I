@@ -1,35 +1,19 @@
+pub mod lib;
+use crate::lib::{Management, Student, StudentStatus};
 
-pub enum Status {
-    Active,
-    NotActive
-}
+fn main() {
+    let mut stud = Management::initialize();
 
-pub enum Grade {
-    A, B, C, D
-}
+    let name_one = "Alice".to_string();
+    let grade_one = 85;
 
-pub struct Student {
-    pub name: String,
-    pub grade: Grade,
-    pub status: Status
-}
+    let name_two = "Bob".to_string();
+    let grade_two = 92;
 
-pub struct Management {
-    pub students: Vec<Student>
-}
+    stud.register_st(name_one, grade_one);
+    stud.register_st(name_two, grade_two);
 
-impl Management {
-    pub fn init() -> Self {
-        Management {
-            students: Vec::new(),
-        }
-    }
+    let students = stud.get_students();
 
-    fn reg_stu (&mut self, stud: Student) {
-        self.students.push(stud)
-    }
-
-    fn edit_stu (&mut self, edit_stu: String) {
-        self.students:name = edit_stu;
-    }
+    println!("Students are {:#?}", students);
 }
