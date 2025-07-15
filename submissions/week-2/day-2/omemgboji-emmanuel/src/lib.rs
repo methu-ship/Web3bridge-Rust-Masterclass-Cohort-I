@@ -66,6 +66,7 @@ mod tests {
         assert_eq!(all_students.get_students().len(), 2);
     }
 
+    #[test]
     fn test_get_student() {
         let mut all_students = AllStudents::new();
         all_students.register_student("Emmanuel".to_string(), 10, Status::Active);
@@ -75,10 +76,29 @@ mod tests {
         assert_eq!(student.name, "Emmanuel");
         assert_eq!(student.grade, 10);
         assert_eq!(student.status, Status::Active);
+    }
 
-        let student = all_students.get_student(1);
-        assert_eq!(student.name, "Emmanuel");
-        assert_eq!(student.grade, 10);
-        assert_eq!(student.status, Status::Active);
+    #[test]
+    fn test_delete_student() {
+        let mut all_students = AllStudents::new();
+        all_students.register_student("Emmanuel".to_string(), 10, Status::Active);
+        all_students.register_student("Signor".to_string(), 20, Status::Active);
+
+        all_students.delete_student(0);
+        assert_eq!(all_students.get_students().len(), 1);
+        assert_eq!(all_students.get_student(0).name, "Signor");
+    }
+
+    #[test]
+    fn test_update_student() {
+        let mut all_students = AllStudents::new();
+        all_students.register_student("Emmanuel".to_string(), 10, Status::Active);
+        all_students.register_student("Signor".to_string(), 20, Status::Active);
+
+        all_students.update_student(0, "Emmanuel Updated".to_string(), 11, Status::Inactive);
+        let student = all_students.get_student(0);
+        assert_eq!(student.name, "Emmanuel Updated");
+        assert_eq!(student.grade, 11);
+        assert_eq!(student.status, Status::Inactive);
     }
 }
