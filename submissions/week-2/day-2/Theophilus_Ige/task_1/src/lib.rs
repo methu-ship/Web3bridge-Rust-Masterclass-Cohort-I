@@ -36,13 +36,15 @@ impl School {
         }
     }
 
-    fn set_status(&mut self, new_status: Status) {
-        self.status = new_status;
+    fn get_students(&mut self, index: usize) -> &mut Student {
+        self.students.get_mut(index).expect("Index out of bounds")
     }
 
-    fn get_students(&self, index: usize) -> &Student {
-        self.students.get(index)
+    fn set_status(&mut self, index: usize, new_status: &Status) {
+        let student = self.get_students(index);
+        student.status = new_status.clone();
     }
+
 }
 
 
@@ -103,7 +105,7 @@ mod tests {
             status: Status::Active,
         };
         school.add_student(student);
-        school.set_status(Status::Inactive);
+        school.set_status(0, &Status::Inactive);
         assert_eq!(school.get_students(0).status, Status::Inactive);
     }
 
