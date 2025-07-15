@@ -40,11 +40,22 @@ impl School {
     }
 
     pub fn update_student(&mut self, id: usize, student: Student){
-        let mut st = self.students[id].clone();
-        st.name = student.name;
-        st.active = student.active;
-        st.grade = student.grade;
-        println!("Student updated successfully");
+        if let Some(st) = self.students.get_mut(id) {
+            st.name = student.name;
+            st.active = student.active;
+            st.grade = student.grade;
+        } else {
+            panic!("Student with id {} does not exist", id);
+        }
+    }
+
+    pub fn delete_student(&mut self, id: usize) {
+        if id < self.students.len() {
+            self.students.remove(id);
+            println!("Student deleted successfully");
+        } else {
+            panic!("Student with id {} does not exist", id);
+        }
     }
 }
 
@@ -109,5 +120,57 @@ mod tests {
 
         assert_eq!(student.name, "Rick".to_string());
         assert_eq!(student.grade, "class 5".to_string());
+    }
+
+    #[test]
+    fn test_update_student() {
+        let mut school = School::initialize();
+
+        let student = Student {
+          name: "John".to_string(),
+          grade: "class 6".to_string(),
+          active: Active::TRUE
+        };
+
+        let updated_student = Student {
+          name: "Rick".to_string(),
+          grade: "class 6".to_string(),
+          active: Active::TRUE
+        };
+
+        school.create_student(student);
+
+        school.update_student(0, updated_student);
+        let student = school.fetch_student(0);
+
+        assert_eq!(student.name, "Rick".to_string());
+    }
+
+    #[test]
+    fn test_delete_student() {
+        let mut school = School::initialize();
+        let student = Student {
+            name: "John".to_string(),
+            grade: "class 6".to_string(),
+            active: Active::TRUE
+        };
+        let student2 = Student {
+            name: "John".to_string(),
+            grade: "class 6".to_string(),
+            active: Active::TRUE
+        };
+        let student3 = Student {
+            name: "John".to_string(),
+            grade: "class 6".to_string(),
+            active: Active::TRUE
+        };
+
+        school.create_student(student);
+        school.create_student(student2);
+        school.create_student(student3);
+
+        assert_eq!(school.students.len(), 3);
+        school.delete_student(1);
+        assert_eq!(school.students.len(), 2);
     }
 }
