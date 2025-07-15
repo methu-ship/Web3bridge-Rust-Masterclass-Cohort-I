@@ -1,0 +1,106 @@
+use std::collections::HashMap;
+use std::fmt;
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum StudentStatus {
+    Active,
+    Inactive,
+}
+
+impl fmt::Display for StudentStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            StudentStatus::Active => write!(f, "Active"),
+            StudentStatus::Inactive => write!(f, "Inactive"),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct Student {
+    pub id: u32,
+    pub name: String,
+    pub grade: String,
+    pub status: StudentStatus,
+}
+
+impl Student {
+    pub fn new(id: u32, name: String, grade: String) -> Self {
+        Student {
+            id,
+            name,
+            grade,
+            status: StudentStatus::Active,
+        }
+    }
+}
+
+impl fmt::Display for Student {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "ID: {}, Name: {}, Grade: {}, Status: {}",
+            self.id, self.name, self.grade, self.status
+        )
+    }
+}
+
+#[derive(Debug)]
+pub enum ClassManagementError {
+    StudentNotFound,
+    StudentAlreadyExists,
+    InvalidGrade,
+    InvalidName,
+}
+
+impl fmt::Display for ClassManagementError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            ClassManagementError::StudentNotFound => write!(f, "Student not found"),
+            ClassManagementError::StudentAlreadyExists => write!(f, "Student already exists"),
+            ClassManagementError::InvalidGrade => write!(f, "Invalid grade provided"),
+            ClassManagementError::InvalidName => write!(f, "Invalid name provided"),
+        }
+    }
+}
+
+pub struct ClassManagementSystem {
+    students: HashMap<u32, Student>,
+    next_id: u32,
+}
+
+impl ClassManagementSystem {
+    pub fn new() -> Self {
+        ClassManagementSystem {
+            students: HashMap::new(),
+            next_id: 1,
+        }
+    }
+
+    // Function to register a new student
+    pub fn register_student(
+        &mut self,
+        name: String,
+        grade: String,
+    ) -> Result<u32, ClassManagementError> {
+        // Validate input
+        if name.trim().is_empty() {
+            return Err(ClassManagementError::InvalidName);
+        }
+
+        if grade.trim().is_empty() {
+            return Err(ClassManagementError::InvalidGrade);
+        }
+
+        let student_id = self.next_id;
+        let student = Student::new(
+            student_id,
+            name.trim().to_string(),
+            grade.trim().to_string(),
+        );
+
+        self.students.insert(student_id, student);
+        self.next_id += 1;
+
+        Ok(student_id)
+    }
