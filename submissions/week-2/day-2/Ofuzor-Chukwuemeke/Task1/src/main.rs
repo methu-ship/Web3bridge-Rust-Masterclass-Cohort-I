@@ -83,4 +83,16 @@ mod test {
         let class = ClassList::initialize();
         assert_eq!(class.class.len(), 0);
     }
+
+    #[test]
+    fn test_create() {
+        let class1 = Class {
+            name: "Emeke".to_string(),
+            grade: Grade::A,
+            status: Status::ACTIVE,
+        };
+        let mut class = ClassList::initialize();
+        class.create_class(class1);
+        assert!(class.class.len() == 1);
+    }
 }
