@@ -117,5 +117,19 @@ mod tests {
         assert!(student.class == "SS3");
         assert!(student.student_status == Status::Active);
     }
+
+    #[test]
+    fn test_edit_student() {
+        let mut school = School::new();
+        school.create_student("Olumide Adenigba".to_string(), 14, "SS3".to_string(), Status::Active);
+
+        school.edit_student(0, Some("Olaide Adenigba".to_string()), Some(12), Some("SS1".to_string()), Some(Status::Active));
+
+        let student = school.get_student(0);
+        assert!(student.name == "Olaide Adenigba");
+        assert!(student.age == 12);
+        assert!(student.class == "SS1");
+        assert!(student.student_status == Status::Active);
+    }
     
 }
