@@ -35,6 +35,10 @@ impl ClassList {
         self.class.push(class);
     }
 
+    pub fn get_classs(self) -> Vec<Class> {
+        self.class
+    }
+
     pub fn get_class(self, index: usize) {
         let find_class = self.class.get(index).unwrap();
         // find_class;
@@ -60,10 +64,23 @@ fn main() {
     };
     new_class.create_class(class1);
     new_class.create_class(class2);
-    let one_class = &new_class.clone().get_class(1);
-    println!("{:?}", one_class);
+    // let one_class = &new_class.clone().get_class(1);
+    let all_class = new_class.get_classs();
+    println!("{:?}", all_class);
+}
 
-    // println!(new_class);
+#[cfg(test)]
+mod test {
+    use super::*;
 
-    println!("{:?}", new_class);
+    #[test]
+    fn test_initialize() {
+        let class = Class {
+            name: "Emeke".to_string(),
+            grade: Grade::A,
+            status: Status::ACTIVE,
+        };
+        let class = ClassList::initialize();
+        assert_eq!(class.class.len(), 0);
+    }
 }
