@@ -78,6 +78,13 @@ impl School {
             }
         }
     }
+    pub fn change_status(&mut self, id: usize, status: Active) {
+        if let Some(target) = self.students.iter_mut().find(|student| student.id == id) {
+            target.status = status;
+        } else {
+            println!("Student with id {}, not found", id);
+        }
+    }
 }
 
 #[cfg(test)]
@@ -221,6 +228,27 @@ mod tests {
         assert_eq!(student.status, Active::INACTIVE);
 
         school.update_status(1);
+        let student = school.fetch_student(0);
+        assert_eq!(student.status, Active::ACTIVE);
+    }
+
+    #[test]
+    fn test_change_status() {
+        let mut school = School::initialize();
+        let student = Student {
+            id: 1,
+            name: "Rick".to_string(),
+            grade: "class 5".to_string(),
+            status: Active::ACTIVE,
+        };
+
+        school.create_student(student);
+
+        school.change_status(1, Active::INACTIVE);
+        let student = school.fetch_student(0);
+        assert_eq!(student.status, Active::INACTIVE);
+
+        school.change_status(1, Active::ACTIVE);
         let student = school.fetch_student(0);
         assert_eq!(student.status, Active::ACTIVE);
     }
