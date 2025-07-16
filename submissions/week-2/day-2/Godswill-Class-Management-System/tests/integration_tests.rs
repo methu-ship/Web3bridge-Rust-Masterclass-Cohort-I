@@ -242,4 +242,48 @@ mod tests {
         assert_eq!(student.grade, "A");
         assert_eq!(student.status, StudentStatus::Inactive);
     }
+
+    #[test]
+    fn test_update_student_status() {
+        let mut cms = ClassManagementSystem::new();
+        let id = cms.register_student("John Doe".to_string(), "A".to_string()).unwrap();
+        
+        // Test setting to Inactive
+        cms.update_student_status(id, StudentStatus::Inactive).unwrap();
+        let student = cms.view_student(id).unwrap();
+        assert_eq!(student.status, StudentStatus::Inactive);
+        
+        // Test setting to Active
+        cms.update_student_status(id, StudentStatus::Active).unwrap();
+        let student = cms.view_student(id).unwrap();
+        assert_eq!(student.status, StudentStatus::Active);
+    }
+
+    #[test]
+    fn test_toggle_student_status() {
+        let mut cms = ClassManagementSystem::new();
+        let id = cms.register_student("John Doe".to_string(), "A".to_string()).unwrap();
+        
+        // Initial status should be Active
+        let student = cms.view_student(id).unwrap();
+        assert_eq!(student.status, StudentStatus::Active);
+        
+        // Toggle to Inactive
+        cms.toggle_student_status(id).unwrap();
+        let student = cms.view_student(id).unwrap();
+        assert_eq!(student.status, StudentStatus::Inactive);
+        
+        // Toggle back to Active
+        cms.toggle_student_status(id).unwrap();
+        let student = cms.view_student(id).unwrap();
+        assert_eq!(student.status, StudentStatus::Active);
+    }
+
+    #[test]
+    fn test_toggle_student_status_nonexistent() {
+        let mut cms = ClassManagementSystem::new();
+        let result = cms.toggle_student_status(999);
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err(), "Student not found");
+    }
 }

@@ -107,6 +107,29 @@ impl ClassManagementSystem {
     pub fn student_count(&self) -> usize {
         self.students.len()
     }
+
+    pub fn update_student_status(&mut self, id: u32, status: StudentStatus) -> Result<(), String> {
+        match self.students.get_mut(&id) {
+            Some(student) => {
+                student.status = status;
+                Ok(())
+            }
+            None => Err("Student not found".to_string()),
+        }
+    }
+
+    pub fn toggle_student_status(&mut self, id: u32) -> Result<(), String> {
+        match self.students.get_mut(&id) {
+            Some(student) => {
+                student.status = match student.status {
+                    StudentStatus::Active => StudentStatus::Inactive,
+                    StudentStatus::Inactive => StudentStatus::Active,
+                };
+                Ok(())
+            }
+            None => Err("Student not found".to_string()),
+        }
+    }
 }
 
 impl Default for ClassManagementSystem {
