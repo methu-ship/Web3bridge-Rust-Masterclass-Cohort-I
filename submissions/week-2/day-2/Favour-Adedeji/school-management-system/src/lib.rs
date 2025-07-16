@@ -1,28 +1,29 @@
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Active {
-    TRUE,
-    FALSE,
+    ACTIVE,
+    INACTIVE,
 }
 
 #[derive(Clone, Debug)]
 pub struct Student {
+    pub id: usize,
     pub name: String,
     pub grade: String,
-    pub active: Active,
+    pub status: Active,
 }
 
 pub struct School {
-    pub students: Vec<Student>
+    pub students: Vec<Student>,
 }
 
 impl School {
     pub fn initialize() -> Self {
         Self {
-            students: Vec::new()
+            students: Vec::new(),
         }
     }
 
-    pub fn create_student(&mut self, student: Student) {
+    pub fn create_student(&mut self, mut student: Student) {
         self.students.push(student);
         println!("Student created successfully");
     }
@@ -39,10 +40,10 @@ impl School {
         }
     }
 
-    pub fn update_student(&mut self, id: usize, student: Student){
+    pub fn update_student(&mut self, id: usize, student: Student) {
         if let Some(st) = self.students.get_mut(id) {
             st.name = student.name;
-            st.active = student.active;
+            st.status = student.status;
             st.grade = student.grade;
         } else {
             panic!("Student with id {} does not exist", id);
@@ -57,6 +58,26 @@ impl School {
             panic!("Student with id {} does not exist", id);
         }
     }
+
+    pub fn update_status(&mut self, id: usize) {
+        for mut student in &mut self.students {
+            if student.id == id {
+                match student.status {
+                    Active::ACTIVE => {
+                        println!("Student with id: {}, is active", id);
+                        student.status = Active::INACTIVE;
+                        println!("Student status is now {:?}", student.status);
+                    }
+                    Active::INACTIVE => {
+                        println!("Student with id: {}, is inactive", id);
+                        student.status = Active::ACTIVE;
+                        println!("Student status is now {:?}", student.status);
+                    }
+                }
+                break;
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -69,9 +90,10 @@ mod tests {
         assert!(school.students.len() == 0);
 
         let student = Student {
+            id: 1,
             name: "John".to_string(),
             grade: String::from("Class 6"),
-            active: Active::TRUE,
+            status: Active::ACTIVE,
         };
 
         school.create_student(student);
@@ -79,20 +101,22 @@ mod tests {
     }
 
     #[test]
-    fn test_get_students(){
+    fn test_get_students() {
         let mut school = School::initialize();
         assert!(school.students.len() == 0);
 
         let student = Student {
-        name: "Rick".to_string(),
-        grade: "class 5".to_string(),
-        active: Active::TRUE
+            id: 1,
+            name: "Rick".to_string(),
+            grade: "class 5".to_string(),
+            status: Active::ACTIVE,
         };
 
         let student2 = Student {
+            id: 2,
             name: "John".to_string(),
             grade: "class 6".to_string(),
-            active: Active::FALSE
+            status: Active::INACTIVE,
         };
 
         school.create_student(student);
@@ -104,14 +128,15 @@ mod tests {
     }
 
     #[test]
-    fn test_fetch_student(){
+    fn test_fetch_student() {
         let mut school = School::initialize();
         assert!(school.students.len() == 0);
 
         let student = Student {
-          name: "Rick".to_string(),
-          grade: "class 5".to_string(),
-          active: Active::TRUE
+            id: 1,
+            name: "Rick".to_string(),
+            grade: "class 5".to_string(),
+            status: Active::ACTIVE,
         };
 
         school.create_student(student);
@@ -127,15 +152,17 @@ mod tests {
         let mut school = School::initialize();
 
         let student = Student {
-          name: "John".to_string(),
-          grade: "class 6".to_string(),
-          active: Active::TRUE
+            id: 1,
+            name: "John".to_string(),
+            grade: "class 6".to_string(),
+            status: Active::ACTIVE,
         };
 
         let updated_student = Student {
-          name: "Rick".to_string(),
-          grade: "class 6".to_string(),
-          active: Active::TRUE
+            id: 1,
+            name: "Rick".to_string(),
+            grade: "class 6".to_string(),
+            status: Active::ACTIVE,
         };
 
         school.create_student(student);
@@ -150,19 +177,22 @@ mod tests {
     fn test_delete_student() {
         let mut school = School::initialize();
         let student = Student {
+            id: 1,
             name: "John".to_string(),
             grade: "class 6".to_string(),
-            active: Active::TRUE
+            status: Active::ACTIVE,
         };
         let student2 = Student {
+            id: 2,
             name: "John".to_string(),
             grade: "class 6".to_string(),
-            active: Active::TRUE
+            status: Active::ACTIVE,
         };
         let student3 = Student {
+            id: 3,
             name: "John".to_string(),
             grade: "class 6".to_string(),
-            active: Active::TRUE
+            status: Active::ACTIVE,
         };
 
         school.create_student(student);
@@ -172,5 +202,26 @@ mod tests {
         assert_eq!(school.students.len(), 3);
         school.delete_student(1);
         assert_eq!(school.students.len(), 2);
+    }
+
+    #[test]
+    fn test_update_status() {
+        let mut school = School::initialize();
+        let student = Student {
+            id: 1,
+            name: "Rick".to_string(),
+            grade: "class 5".to_string(),
+            status: Active::ACTIVE,
+        };
+
+        school.create_student(student);
+        school.update_status(1);
+
+        let student = school.fetch_student(0);
+        assert_eq!(student.status, Active::INACTIVE);
+
+        school.update_status(1);
+        let student = school.fetch_student(0);
+        assert_eq!(student.status, Active::ACTIVE);
     }
 }
