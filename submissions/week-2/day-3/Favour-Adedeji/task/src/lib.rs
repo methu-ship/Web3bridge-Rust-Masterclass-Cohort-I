@@ -1,16 +1,3 @@
-// ## Requirements
-
-// - Determine if an employee can access web3bridge garage using a digital keycard.
-// - Employees that **can access** the building are:
-//   - Media team
-//   - IT department employees
-//   - Managers
-// - Other employees that **work at the company** are:
-//   - Social media team
-//   - Technician supervisors
-//   - Kitchen staff
-// - Ensure that **terminated employees cannot access** the building regardless of their position.
-
 #[derive(Debug)]
 pub enum Department {
   MEDIA,
@@ -21,14 +8,20 @@ pub enum Department {
   KITCHEN_STAFF,
 }
 
+#[derive(Debug, PartialEq)]
+pub enum Status {
+  ACTIVE,
+  TERMINATED,
+}
+
 pub struct EmployeeDetails {
     pub name: String,
     pub department: Department,
-    pub is_terminated: bool,
+    pub is_terminated: Status,
 }
 
 pub fn can_access_building(employee: &EmployeeDetails) -> Result<bool, String> {
-    if employee.is_terminated {
+    if employee.is_terminated == Status::TERMINATED {
         println!("{} is terminated and cannot access the building.", employee.name);
         return Ok(false);
     }
@@ -56,19 +49,13 @@ mod tests {
     let employee1 = EmployeeDetails {
       name: "Alice".to_string(),
       department: Department::MEDIA,
-      is_terminated: false,
+      is_terminated: Status::ACTIVE,
     };
 
     let employee2 = EmployeeDetails {
       name: "Bob".to_string(),
       department: Department::SOCIAL_MEDIA,
-      is_terminated: false,
-    };
-
-    let employee2 = EmployeeDetails {
-      name: "Rick".to_string(),
-      department: Department::SOCIAL_MEDIA,
-      is_terminated: true,
+      is_terminated: Status::TERMINATED,
     };
 
     assert_eq!(can_access_building(&employee1), Ok(true));
