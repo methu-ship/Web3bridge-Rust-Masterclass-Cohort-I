@@ -1,24 +1,22 @@
-mod lib;
-
-use crate::lib::{can_access_building, Department, EmployeeDetails, Status};
+use web3bridge::{enums, state::EmployeeDetails, can_access_building};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let employee1 = EmployeeDetails {
         name: "Alice".to_string(),
-        department: Department::MEDIA,
-        is_terminated: Status::ACTIVE,
+        department: enums::Department::MEDIA,
+        is_terminated: enums::Status::ACTIVE,
     };
 
     let employee2 = EmployeeDetails {
         name: "Bob".to_string(),
-        department: Department::SOCIAL_MEDIA,
-        is_terminated: Status::TERMINATED,
+        department: enums::Department::SOCIAL_MEDIA,
+        is_terminated: enums::Status::TERMINATED,
     };
 
     let employee3 = EmployeeDetails {
         name: "Rick".to_string(),
-        department: Department::MANAGER,
-        is_terminated: Status::TERMINATED,
+        department: enums::Department::MANAGER,
+        is_terminated: enums::Status::TERMINATED,
     };
 
     let res = can_access_building(&employee1).unwrap();

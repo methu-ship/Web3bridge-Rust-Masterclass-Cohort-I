@@ -1,24 +1,8 @@
-#[derive(Debug)]
-pub enum Department {
-  MEDIA,
-  IT,
-  MANAGER,
-  SOCIAL_MEDIA,
-  TECHNICIAN_SUPERVISOR,
-  KITCHEN_STAFF,
-}
+pub mod enums;
+pub mod state;
 
-#[derive(Debug, PartialEq)]
-pub enum Status {
-  ACTIVE,
-  TERMINATED,
-}
-
-pub struct EmployeeDetails {
-    pub name: String,
-    pub department: Department,
-    pub is_terminated: Status,
-}
+pub use enums::{Department, Status};
+pub use state::EmployeeDetails;
 
 pub fn can_access_building(employee: &EmployeeDetails) -> Result<bool, String> {
     if employee.is_terminated == Status::TERMINATED {
