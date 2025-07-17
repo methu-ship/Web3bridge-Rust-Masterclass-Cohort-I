@@ -9,6 +9,7 @@
 
 #[derive(Debug)]
 pub struct Student {
+    id: u32,
     name: String,
     grade: u8,
     active: Status,
@@ -32,21 +33,29 @@ impl Class {
     }
 
     fn reg_student(&mut self, name: String, grade: u8, active: Status) {
-        let student = Student { name, grade, active };
+        let id = self.students.len() as u32 + 1; // Simple ID generation
+        // Ensure unique ID for each student
+        for student in &self.students {
+            if student.id == id {
+                panic!("ID collision detected, please ensure unique IDs.");
+            }
+        }
+        // Create a new student and add to the class
+        let student = Student { id, name, grade, active };
         self.students.push(student);
     }
-    
-    fn edit(&mut self, index: usize, name: String, grade: u8, active: Status) {
-        if let Some(student) = self.students.get_mut(index) {
+
+    fn edit(&mut self, id: u32, name: String, grade: u8, active: Status) {
+        if let Some(student) = self.students.iter_mut().find(|s| s.id == id) {
             student.name = name;
             student.grade = grade;
             student.active = active;
         }
     }
 
-    fn delete(&mut self, index: usize) {
-        if index < self.students.len() {
-            self.students.remove(index);
+    fn delete(&mut self, id: u32) {
+        if let Some(pos) = self.students.iter().position(|s| s.id == id) {
+            self.students.remove(pos);
         }
     }
 
@@ -55,12 +64,34 @@ impl Class {
             println!("No students registered.");
             return;
         }
-        
-        for (index, student) in self.students.iter().enumerate() {
-            println!("{}. Name: {}, Grade: {}, Status: {:?}", 
-                     index + 1, student.name, student.grade, student.active);
+        println!("List of Students:");
+        // Display each student's details
+        for student in &self.students {
+            println!("ID: {}, Name: {}, Grade: {}, Status: {:?}", 
+                     student.id, student.name, student.grade, student.active);
         }
     }
+
+    // Function to set the status of a student
+    // This function allows changing the status of a student by ID
+    // It can be used to activate or deactivate a student
+    fn set_status(&mut self, id: u32, new_status: Status) {
+    if let Some(student) = self.students.iter_mut().find(|s| s.id == id) {
+        student.active = new_status;
+        println!("Student ID {} status updated to {:?}", id, student.active);
+    } else {
+        println!("Student with ID {} not found.", id);
+    }
+    }
+
+    fn get_student(&self, id: u32) -> Option<&Student> {
+    self.students.iter().find(|s| s.id == id)
+    }
+    
+    fn get_all_students(&self) -> &Vec<Student> {
+        &self.students
+    }
+
 }
 
 fn main() {
