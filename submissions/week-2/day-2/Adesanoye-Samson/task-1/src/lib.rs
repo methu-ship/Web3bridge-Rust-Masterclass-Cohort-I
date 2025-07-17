@@ -86,8 +86,9 @@ mod tests {
         let mut enrollment = ClassEnrollment::new();
         let student = Student::new(1, "Alice".to_string(), 90);
         enrollment.add_student(student.clone());
-        // assert_eq!(enrollment.update_student_status(1, Status::Inactive), Some(&student));
-        // assert_eq!(enrollment.get_student(1).unwrap().status, Status::Inactive);
+        assert_eq!(enrollment.update_student_status(1, Status::Active), Some(&student));
+        enrollment.update_student_status(1, Status::Inactive);
+        assert_eq!(enrollment.get_student(1).unwrap().status, Status::Inactive);
     }
 
     #[test]
