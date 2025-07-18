@@ -1,96 +1,13 @@
+mod employee;
 
-
-
-#[derive(Debug)]
-enum EmployeeType {
-    // Employees that can access the building
-    MediaTeam,
-    ITDepartment,
-    Manager,
-    // Employees that cannot access the building
-    SocialMediaTeam,
-    TechnicianSupervisor,
-    KitchenStaff,
-}
-
-#[derive(Debug)]
-struct Employee {
-    employee_type: EmployeeType,
-    is_employed: bool,
-}
-
-impl Employee {
-    pub fn new(employee_type: EmployeeType, is_employed: bool) -> Self {
-        Employee {
-            employee_type,
-            is_employed,
-        }
-    }
-
-    pub fn can_access_building(&self) -> Result<(), String> {
-        // Check if the employee is employed
-        if !self.is_employed {
-            return Err("Access denied: Employee is terminated.".into());
-        }
-
-        // Check if the employee type has access
-        match self.employee_type {
-            EmployeeType::MediaTeam
-            | EmployeeType::ITDepartment
-            | EmployeeType::Manager => Ok(()),
-
-            EmployeeType::SocialMediaTeam
-            | EmployeeType::TechnicianSupervisor
-            | EmployeeType::KitchenStaff => Err("Access denied: Role does not have access.".into()),
-        }
-    }
-
-    pub fn print_access_status(&self, employee: &Employee) {
-        match employee.can_access_building() {
-            Ok(_) => println!("Access granted: Employee can access the building."),
-            Err(err) => println!("{}", err),
-        }
-    }
-}
-
-
+use employee::{Employee, EmployeeType};
 
 fn main() {
-    println!("Hello, world!");
-}
+    let manager = Employee::new(EmployeeType::Manager, true);
+    let social_media = Employee::new(EmployeeType::SocialMediaTeam, true);
+    let terminated = Employee::new(EmployeeType::ITDepartment, false);
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-     #[test]
-    fn test_media_team_access() {
-        let employee = Employee::new(EmployeeType::MediaTeam, true);
-        assert_eq!(employee.can_access_building(), Ok(()));
-    }
-
-        #[test]
-    fn test_it_department_access() {
-        let employee = Employee::new(EmployeeType::ITDepartment, true);
-        assert_eq!(employee.can_access_building(), Ok(()));
-    }
-
-    #[test]
-    fn test_manager_access() {
-        let employee = Employee::new(EmployeeType::Manager, true);
-        assert_eq!(employee.can_access_building(), Ok(()));
-    }
-
-
-    #[test]
-    fn test_social_media_team_denied() {
-        let employee = Employee::new(EmployeeType::SocialMediaTeam, true);
-        assert_eq!(employee.can_access_building(), Err("Access denied: Role does not have access.".into()));
-    }
-
-    #[test]
-    fn test_terminated_employee_denied() {
-        let employee = Employee::new(EmployeeType::Manager, false);
-        assert_eq!(employee.can_access_building(), Err("Access denied: Employee is terminated.".into()));
-    }
-
+    manager.print_access_status();
+    social_media.print_access_status();
+    terminated.print_access_status();
 }
