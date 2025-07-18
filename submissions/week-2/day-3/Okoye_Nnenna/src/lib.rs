@@ -1,47 +1,10 @@
-#[derive(Debug, PartialEq)]
-enum EmployeeType {
-    Media,
-    IT,
-    Manager,
-    SocialMedia,
-    Technician,
-    Kitchen,
-}
-
-
-#[derive(Debug)]
-struct Employee {
-    role: EmployeeType,
-    is_employed: bool,
-}
-
-impl Employee {
-    fn new(role: EmployeeType, is_employed: bool) -> Self {
-        Employee { role, is_employed }
-    }
-}
-
-fn can_access(employee: &Employee) -> Result<(), String> {
-    if !employee.is_employed {
-        return Err("Access denied: Employee is terminated.".into());
-    }
-
-    match employee.role {
-        EmployeeType::Media | EmployeeType::IT | EmployeeType::Manager => Ok(()),
-        _ => Err("Access denied: Not authorized for garage access.".into()),
-    }
-}
-
-fn check_access(employee: &Employee) -> Result<(), String> {
-    can_access(employee)?; 
-    println!("Access granted: Welcome to the garage.");
-    Ok(())
-}
-
+pub mod employees;
+pub mod garage_logic;
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::employees::{Employee, EmployeeType};
+    use super::garage_logic::can_access;
 
     fn setup(role: EmployeeType, is_employed: bool) -> Employee {
         Employee::new(role, is_employed)
