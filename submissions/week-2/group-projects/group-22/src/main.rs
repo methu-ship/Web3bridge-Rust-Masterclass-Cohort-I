@@ -1,20 +1,4 @@
-// ### Group 22: Facility Space Manager
-
-// - Description: Manage office space allocations.
-// - Stage 1:
-//   - Add space assignments (space name, occupant, purpose).
-//   - View all assignments.
-// - Stage 2:
-//   - Remove assignments.
-// - Stage 3:
-//   - Edit assignment details.
-//   - Cancel edits.
-// - Implementation Tips: Use a `Vec` initially, then a `HashMap` with space name as the key.
-
-use std::{
-    collections::HashMap,
-    io::{self},
-};
+use std::{collections::HashMap, io};
 
 struct Space {
     name: String,
@@ -114,6 +98,43 @@ impl SpaceManager {
     }
 }
 
+impl SpaceManager {
+    fn add_space_test(&mut self, space_name: &str, occupant: &str, purpose: &str) {
+        if self.spaces.contains_key(space_name) {
+            return println!("Space existed already");
+        }
+        self.spaces.insert(
+            space_name.to_string(),
+            Space {
+                name: space_name.to_string(),
+                occupant: occupant.to_string(),
+                purpose: purpose.to_string(),
+            },
+        );
+    }
+
+    fn view_spaces_test(&self) {
+        if self.spaces.is_empty() {
+            return println!("No spaces available");
+        }
+    }
+
+    fn remove_space_test(&mut self, space_name: &str) {
+        if self.spaces.remove(space_name).is_none() {
+            return println!("Space does not exist");
+        }
+    }
+
+    fn edit_space_test(&mut self, space_name: &str, new_occupant: &str, new_purpose: &str) {
+        if let Some(space) = self.spaces.get_mut(space_name) {
+            space.occupant = new_occupant.to_string();
+            space.purpose = new_purpose.to_string();
+        } else {
+            println!("Space does not exist");
+        }
+    }
+}
+
 fn main() {
     let mut space_manager = SpaceManager::new();
 
@@ -170,34 +191,43 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    fn initialize() -> SpaceManager {
+        let mut space_manager = SpaceManager::new();
+        space_manager.add_space_test("Web3Bridge Garage", "Gbemiga", "Meetings");
+        space_manager.add_space_test("Ethereum house", "Temi", "Sleeping");
+        space_manager
+    }
 
     #[test]
-    fn test_space_creation() {
-        let mut manager = SpaceManager::new();
-        manager.add_space();
-        assert_eq!(manager.spaces.len(), 1);
+    fn test_add_space() {
+        let space_manager = initialize();
+        assert_eq!(space_manager.spaces.len(), 2);
     }
 
     #[test]
     fn test_view_spaces() {
-        let mut manager = SpaceManager::new();
-        manager.add_space();
-        manager.view_spaces();
-        assert!(!manager.spaces.is_empty());
+        let space_manager = initialize();
+        assert!(!space_manager.spaces.is_empty());
     }
 
     #[test]
-    fn test_space_removal() {
-        let mut manager = SpaceManager::new();
-        manager.add_space();
-        manager.remove_space();
-        assert_eq!(manager.spaces.len(), 0);
+    fn test_remove_space() {
+        let mut space_manager = initialize();
+        space_manager.remove_space_test("Ethereum house");
+        assert_eq!(space_manager.spaces.len(), 1);
     }
+
     #[test]
-    fn test_space_editing() {
-        let mut manager = SpaceManager::new();
-        manager.add_space();
-        manager.edit_space();
-        assert_eq!(manager.spaces.len(), 1);
+    fn test_edit_space() {
+        let mut space_manager = initialize();
+        space_manager.edit_space_test("Web3Bridge Garage", "Gbemiga", "Meetings and Coding");
+        assert_eq!(
+            space_manager
+                .spaces
+                .get("Web3Bridge Garage")
+                .unwrap()
+                .purpose,
+            "Meetings and Coding"
+        );
     }
 }
