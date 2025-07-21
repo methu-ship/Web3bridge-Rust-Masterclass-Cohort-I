@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+#[derive(Debug, Clone)]
 pub struct Item {
     pub name: String,
     pub quantity: u32,
@@ -22,7 +23,7 @@ impl Item {
         )
     }
 
-    pub fn total_price(&self) -> f64 {
+    pub fn total_value(&self) -> f64 {
         self.quantity as f64 * self.price
     }
 }
@@ -59,37 +60,103 @@ impl InventoryManager {
         }
     }
 
-    pub fn add_item(&mut self, item: Item) -> Result<(), InventoryError> {
-        if self.items.contains_key(&item.name) {
+    pub fn add_item(&mut self, name: String, quantity: u32, price: f64) -> Result<(), InventoryError> {
+        if name.trim().is_empty() {
+            return Err(InventoryError::InvalidInput("Item name cannot be empty".to_string()));
+        }
+
+        if price < 0.0 {
+            return Err(InventoryError::InvalidInput("Price cannot be negative".to_string()));
+        }
+
+        let key = name.to_lowercase();
+        if self.items.contains_key(&key) {
             return Err(InventoryError::ItemAlreadyExists);
         }
-        self.items.insert(item.name.clone(), item);
+
+        let item = Item::new(name, quantity, price);
+        self.items.insert(key, item);
         Ok(())
     }
 
-    pub fn remove_item(&mut self, name: &str) -> Result<(), InventoryError> {
-        if self.items.remove(name).is_none() {
-            return Err(InventoryError::ItemNotFound);
+    // Stage 1: Get all items for viewing
+    pub fn get_all_items(&self) -> Vec<&Item> {
+        let mut items_vec: Vec<_> = self.items.values().collect();
+        items_vec.sort_by(|a, b| a.name.cmp(&b.name));
+        items_vec
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.items.is_empty()
+    }
+
+    pub fn item_count(&self) -> usize {
+        self.items.len()
+    }
+
+    pub fn total_inventory_value(&self) -> f64 {
+        self.items.values().map(|item| item.total_value()).sum()
+    }
+
+    // Stage 2: Remove items
+    pub fn find_item(&self, name: &str) -> Option<&Item> {
+        let key = name.to_lowercase();
+        self.items.get(&key)
+    }
+
+    pub fn remove_item(&mut self, name: &str) -> Result<Item, InventoryError> {
+        if self.items.is_empty() {
+            return Err(InventoryError::EmptyInventory);
         }
-        Ok(())
-    }
 
-    pub fn edit_item(&mut self, name: &str, quantity: u32, price: f64) -> Result<(), InventoryError> {
-        match self.items.get_mut(name) {
-            Some(item) => {
-                item.quantity = quantity;
-                item.price = price;
-                Ok(())
-            },
+        let key = name.to_lowercase();
+        match self.items.remove(&key) {
+            Some(item) => Ok(item),
             None => Err(InventoryError::ItemNotFound),
         }
     }
 
-    pub fn list_items(&self) -> Result<Vec<String>, InventoryError> {
+    // Stage 3: Edit items
+    pub fn edit_item(&mut self, original_name: &str, new_name: String, new_quantity: u32, new_price: f64) -> Result<Item, InventoryError> {
         if self.items.is_empty() {
             return Err(InventoryError::EmptyInventory);
         }
-        Ok(self.items.values().map(|item| item.display()).collect())
+
+        if new_name.trim().is_empty() {
+            return Err(InventoryError::InvalidInput("Item name cannot be empty".to_string()));
+        }
+
+        if new_price < 0.0 {
+            return Err(InventoryError::InvalidInput("Price cannot be negative".to_string()));
+        }
+
+        let old_key = original_name.to_lowercase();
+        let new_key = new_name.to_lowercase();
+
+        // Check if original item exists
+        if !self.items.contains_key(&old_key) {
+            return Err(InventoryError::ItemNotFound);
+        }
+
+        // Check if new name conflicts with existing item (unless it's the same item)
+        if old_key != new_key && self.items.contains_key(&new_key) {
+            return Err(InventoryError::ItemAlreadyExists);
+        }
+
+        // Remove old entry
+        let _old_item = self.items.remove(&old_key).unwrap();
+
+        // Create and insert updated item
+        let updated_item = Item::new(new_name, new_quantity, new_price);
+        self.items.insert(new_key, updated_item.clone());
+
+        Ok(updated_item)
+    }
+
+    pub fn get_item_names(&self) -> Vec<String> {
+        let mut names: Vec<_> = self.items.values().map(|item| item.name.clone()).collect();
+        names.sort();
+        names
     }
 }
 

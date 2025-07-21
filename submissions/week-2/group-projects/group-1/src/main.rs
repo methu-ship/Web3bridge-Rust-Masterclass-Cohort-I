@@ -88,7 +88,7 @@ struct UI;
 
 impl UI {
     fn display_menu() {
-        println!("\n" + &"=".repeat(50));
+        // println!("\n" + &"=".repeat(50));
         println!("       INVENTORY STOCK MANAGER");
         println!("{}", "=".repeat(50));
         println!("1. Add Item       (Stage 1)");
