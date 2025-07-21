@@ -58,11 +58,12 @@ impl SpaceManager {
                     purpose: purpose,
                 },
             );
+            println!("[response] -> Space Created \n");
         } else {
             println!("[response] -> Space existed already\n")
         }
     }
-    
+
     fn view_spaces(&self) {
         if self.spaces.is_empty() {
             println!("[response] -> No spaces available.\n");
@@ -88,11 +89,23 @@ impl SpaceManager {
         self.spaces.remove(&space_name);
         println!("[response] -> Space deleted\n");
     }
-    
+
     fn edit_space(&mut self) {
         let space_name = Self::input("Enter space name: ");
-        
+
         if let Some(space) = self.spaces.get_mut(&space_name) {
+            let confirmation = Self::input(
+                format!(
+                    "Are you sure you want to edit this space {}? (yes/no): ",
+                    space.name,
+                )
+                .as_str(),
+            );
+            if confirmation.to_lowercase() != "yes" {
+                println!("[response] -> Edit cancelled.\n");
+                return;
+            }
+
             space.occupant = Self::input("Enter new occupant name: ");
             space.purpose = Self::input("Enter new purpose: ");
             return;
@@ -112,7 +125,7 @@ fn main() {
     =                                             =
     =   Authors:                                  =
     =           Adekeye Temitope;                 =
-    =           <other-long-ass-names-go-here>;   =
+    =           Gbangbola Oluwagbemig;            =
     =           <other-long-ass-names-go-here>;   =
     =                                             =
     =                               Group 22;     =
@@ -121,7 +134,6 @@ fn main() {
     );
 
     loop {
-
         println!("Prompt: To create a Space, press 1");
         // println!("\tTo create a Space, press 1");
         println!("\tTo view all Spaces, press 2");
@@ -152,5 +164,40 @@ fn main() {
             }
             _ => println!("Unrecognized command"),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_space_creation() {
+        let mut manager = SpaceManager::new();
+        manager.add_space();
+        assert_eq!(manager.spaces.len(), 1);
+    }
+
+    #[test]
+    fn test_view_spaces() {
+        let mut manager = SpaceManager::new();
+        manager.add_space();
+        manager.view_spaces();
+        assert!(!manager.spaces.is_empty());
+    }
+
+    #[test]
+    fn test_space_removal() {
+        let mut manager = SpaceManager::new();
+        manager.add_space();
+        manager.remove_space();
+        assert_eq!(manager.spaces.len(), 0);
+    }
+    #[test]
+    fn test_space_editing() {
+        let mut manager = SpaceManager::new();
+        manager.add_space();
+        manager.edit_space();
+        assert_eq!(manager.spaces.len(), 1);
     }
 }
