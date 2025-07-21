@@ -18,8 +18,9 @@ fn main() {
     =                                             =
     =   Authors:                                  =
     =           Adekeye Temitope;                 =
-    =           Gbangbola Oluwagbemig;            =
-    =           <other-long-ass-names-go-here>;   =
+    =           Gbangbola Oluwagbemiga;           =
+    =           James Emmanuel;                   =
+    =           Ofuzor Chukwuemeke;               =
     =                                             =
     =                               Group 22;     =
     ===============================================
