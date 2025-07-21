@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="EMPTY_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/submissions/week-1/day-2/Samuel-Dahunsi-Basic-Arithmetic/arithmetic/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/submissions/week-1/day-4/Samuel-Dahunsi-Library-Item-Mgt/library-mgt/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/submissions/week-2/group-projects/group-18b/customer-feedback/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/submissions/week-1/day-2/Samuel-Dahunsi-Basic-Arithmetic/arithmetic/target" />
+      <excludeFolder url="file://$MODULE_DIR$/submissions/week-1/day-4/Samuel-Dahunsi-Library-Item-Mgt/library-mgt/target" />
+      <excludeFolder url="file://$MODULE_DIR$/submissions/week-2/group-projects/group-18b/customer-feedback/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
