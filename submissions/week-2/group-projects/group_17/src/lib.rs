@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 
 #[derive(Clone, Debug)]
 pub struct ResourceAllocator {
@@ -7,18 +8,37 @@ pub struct ResourceAllocator {
     pub quantity: u32,
 }
 
+// pub struct Resources {
+//     pub resource: Vec<ResourceAllocator>,
+//     next_id: u32
+// }
+
 pub struct Resources {
-    pub resource: Vec<ResourceAllocator>,
+    pub resource: HashMap<u32, ResourceAllocator>,
     next_id: u32
 }
 
 impl Resources {
     pub fn init() -> Self {
         Self {
-            resource: Vec::new(),
+            resource: HashMap::new(),
+            // resource: Vec::new(),
             next_id: 1
         }
     }
+
+    // pub fn add_resource(&mut self, resource_name: String, project_name: String, quantity: u32) -> u32 {
+    //     let id_count = self.next_id;
+    //     self.next_id += 1;
+    //     let record = ResourceAllocator {
+    //         id: id_count,
+    //         resource_name,
+    //         project_name,
+    //         quantity,
+    //     };
+    //     self.resource.push(record);
+    //     id_count
+    // }
 
     pub fn add_resource(&mut self, resource_name: String, project_name: String, quantity: u32) -> u32 {
         let id_count = self.next_id;
@@ -29,20 +49,36 @@ impl Resources {
             project_name,
             quantity,
         };
-        self.resource.push(record);
+        self.resource.insert(id_count, record);
         id_count
     }
 
-    pub fn view_allocations(&self) -> &Vec<ResourceAllocator> {
-        &self.resource
+    // pub fn view_allocations(&self) -> &Vec<ResourceAllocator> {
+    //     &self.resource
+    // }
+
+    pub fn view_allocations(&self) -> Vec<&ResourceAllocator> {
+        self.resource.values().collect()
     }
+
+    // pub fn remove_allocations(&mut self, id: u32) {
+    //     self.resource.retain(|index| index.id != id);
+    // }
 
     pub fn remove_allocations(&mut self, id: u32) {
-        self.resource.retain(|index| index.id != id);
+        self.resource.remove(&id);
     }
 
+    // pub fn edit_allocation(&mut self, id: u32, new_resource_name: String, new_project_name: String, new_quantity: u32) {
+    //     if let Some(rec) = self.resource.iter_mut().find(|index| index.id == id) {
+    //         rec.resource_name = new_resource_name;
+    //         rec.project_name = new_project_name;
+    //         rec.quantity = new_quantity;
+    //     }
+    // }
+
     pub fn edit_allocation(&mut self, id: u32, new_resource_name: String, new_project_name: String, new_quantity: u32) {
-        if let Some(rec) = self.resource.iter_mut().find(|index| index.id == id) {
+        if let Some(rec) = self.resource.get_mut(&id) {
             rec.resource_name = new_resource_name;
             rec.project_name = new_project_name;
             rec.quantity = new_quantity;
@@ -94,9 +130,11 @@ mod tests {
         
         assert_eq!(id, 1);
         assert_eq!(resources.resource.len(), 1);
-        assert_eq!(resources.resource[0].resource_name, "Wood");
-        assert_eq!(resources.resource[0].project_name, "Cabin");
-        assert_eq!(resources.resource[0].quantity, 100);
+        
+        let resource = resources.resource.get(&1).unwrap();
+        assert_eq!(resource.resource_name, "Wood");
+        assert_eq!(resource.project_name, "Cabin");
+        assert_eq!(resource.quantity, 100);
     }
 
     #[test]
@@ -104,6 +142,8 @@ mod tests {
         let record = setup();
         assert_eq!(record.resource.len(), 2);
         assert_eq!(record.next_id, 3);
+        assert!(record.resource.contains_key(&1));
+        assert!(record.resource.contains_key(&2));
     }
 
     #[test]
@@ -112,8 +152,12 @@ mod tests {
         let allocations = record.view_allocations();
         
         assert_eq!(allocations.len(), 2);
-        assert_eq!(allocations[0].resource_name, "Cement");
-        assert_eq!(allocations[1].resource_name, "Steel");
+        
+        // Check that both resources exist (order doesn't matter with HashMap)
+        let has_cement = allocations.iter().any(|r| r.resource_name == "Cement");
+        let has_steel = allocations.iter().any(|r| r.resource_name == "Steel");
+        assert!(has_cement);
+        assert!(has_steel);
     }
 
     #[test]
@@ -123,8 +167,11 @@ mod tests {
         
         record.remove_allocations(1);
         assert_eq!(record.resource.len(), 1);
-        assert_eq!(record.resource[0].id, 2);
-        assert_eq!(record.resource[0].resource_name, "Steel");
+        assert!(!record.resource.contains_key(&1));
+        assert!(record.resource.contains_key(&2));
+        
+        let remaining = record.resource.get(&2).unwrap();
+        assert_eq!(remaining.resource_name, "Steel");
     }
 
     #[test]
@@ -147,7 +194,7 @@ mod tests {
             75
         );
         
-        let updated = &record.resource[0];
+        let updated = record.resource.get(&1).unwrap();
         assert_eq!(updated.resource_name, "Concrete");
         assert_eq!(updated.project_name, "Skyscraper");
         assert_eq!(updated.quantity, 75);
@@ -157,7 +204,7 @@ mod tests {
     #[test]
     fn test_edit_nonexistent_allocation() {
         let mut record = setup();
-        let original_first = record.resource[0].clone();
+        let original_first = record.resource.get(&1).unwrap().clone();
         
         record.edit_allocation(
             999,
@@ -166,9 +213,10 @@ mod tests {
             10
         );
         
-        assert_eq!(record.resource[0].resource_name, original_first.resource_name);
-        assert_eq!(record.resource[0].project_name, original_first.project_name);
-        assert_eq!(record.resource[0].quantity, original_first.quantity);
+        let unchanged = record.resource.get(&1).unwrap();
+        assert_eq!(unchanged.resource_name, original_first.resource_name);
+        assert_eq!(unchanged.project_name, original_first.project_name);
+        assert_eq!(unchanged.quantity, original_first.quantity);
     }
 
     #[test]
