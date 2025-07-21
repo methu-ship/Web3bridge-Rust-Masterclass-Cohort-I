@@ -11,7 +11,10 @@
 //   - Cancel edits.
 // - Implementation Tips: Use a `Vec` initially, then a `HashMap` with space name as the key.
 
-use std::io;
+use std::{
+    collections::HashMap,
+    io::{self},
+};
 
 struct Space {
     name: String,
@@ -20,96 +23,115 @@ struct Space {
 }
 
 struct SpaceManager {
-    spaces: Vec<Space>,
+    // spaces: Vec<Space>,
+    spaces: HashMap<String, Space>,
 }
 
 impl SpaceManager {
     fn new() -> Self {
-        SpaceManager { spaces: vec![] }
+        SpaceManager {
+            spaces: HashMap::new(),
+        }
     }
 
-    fn input(text: String) -> String {
-        println!("{}", text);
+    fn input(text: &str) -> String {
+        println!("[prompt] -> {}", text);
         let mut prompt = String::new();
         io::stdin()
             .read_line(&mut prompt)
             .expect("something went wrong");
 
-        prompt
+        prompt.trim().to_string()
     }
 
     fn add_space(&mut self) {
-        let space_name = Self::input("Enter space name: ".to_string());
-        if !self
-            .spaces
-            .iter_mut()
-            .find(|el| el.name == space_name)
-            .is_some()
-        {
-            let occupant = Self::input("Enter occupant name: ".to_string());
-            let purpose = Self::input("Enter purpose of the space: ".to_string());
-            self.spaces.push(Space {
-                name: space_name.to_string(),
-                occupant: occupant.trim().to_string(),
-                purpose: purpose.trim().to_string(),
-            });
+        let space_name = Self::input("Enter space name: ");
+
+        if self.spaces.get(&space_name).is_none() {
+            let occupant = Self::input("Enter occupant name: ");
+            let purpose = Self::input("Enter purpose of the space: ");
+            self.spaces.insert(
+                space_name.trim().to_string(),
+                Space {
+                    name: space_name,
+                    occupant: occupant,
+                    purpose: purpose,
+                },
+            );
         } else {
-            println!("Space existed already")
+            println!("[response] -> Space existed already\n")
         }
     }
-
+    
     fn view_spaces(&self) {
         if self.spaces.is_empty() {
-            println!("No spaces available.");
+            println!("[response] -> No spaces available.\n");
             return;
         }
 
-        for space in &self.spaces {
+        for (_, space) in &self.spaces {
             println!(
-                "Space: {}, Occupant: {}, Purpose: {}",
+                "Space -> {}: Occupant: {}, Purpose: {}",
                 space.name, space.occupant, space.purpose
             );
         }
+        println!("");
     }
 
     fn remove_space(&mut self) {
-        let space_name = Self::input("Enter space name: ".to_string());
+        let space_name = Self::input("Enter space name: ");
 
-        if !self.spaces.iter().any(|s| s.name == space_name) {
-            println!("Space does not exist.");
+        if self.spaces.get(&space_name).is_none() {
+            println!("[response] -> Space does not exist.\n");
             return;
         }
-        self.spaces.retain(|space| space.name != space_name);
-        println!("Space deleted");
+        self.spaces.remove(&space_name);
+        println!("[response] -> Space deleted\n");
     }
-
+    
     fn edit_space(&mut self) {
-        let space_name = Self::input("Enter space name: ".to_string());
-        if !self.spaces.iter().any(|s| s.name == space_name) {
-            println!("Space does not exist.");
+        let space_name = Self::input("Enter space name: ");
+        
+        if let Some(space) = self.spaces.get_mut(&space_name) {
+            space.occupant = Self::input("Enter new occupant name: ");
+            space.purpose = Self::input("Enter new purpose: ");
             return;
         }
-
-        if let Some(space) = self.spaces.iter_mut().find(|s| s.name == space_name) {
-            space.occupant = Self::input("Enter new occupant name: ".to_string());
-            space.purpose = Self::input("Enter new purpose: ".to_string());
-        }
+        println!("[response] -> Space does not exist.\n");
     }
 }
 
 fn main() {
     let mut space_manager = SpaceManager::new();
 
+    println!(
+        "
+    ===============================================
+    =                  Welcome                    =
+    =           Facility Space Manager            =
+    =                                             =
+    =   Authors:                                  =
+    =           Adekeye Temitope;                 =
+    =           <other-long-ass-names-go-here>;   =
+    =           <other-long-ass-names-go-here>;   =
+    =                                             =
+    =                               Group 22;     =
+    ===============================================
+    "
+    );
+
     loop {
-        println!("To create a Space, press 1");
-        println!("To view all Spaces, press 2");
-        println!("To edit a Space, press 3");
-        println!("To delete a Space, press 4");
-        println!("To abort, press 5");
+
+        println!("Prompt: To create a Space, press 1");
+        // println!("\tTo create a Space, press 1");
+        println!("\tTo view all Spaces, press 2");
+        println!("\tTo edit a Space, press 3");
+        println!("\tTo delete a Space, press 4");
+        println!("\tTo abort, press 5");
 
         let mut option = String::new();
 
-        io::stdin().read_line(&mut option);
+        let _ = io::stdin().read_line(&mut option);
 
         match option.trim() {
             "1" => {
@@ -125,7 +147,7 @@ fn main() {
                 space_manager.remove_space();
             }
             "5" => {
-                println!("Abort!!!");
+                println!("[Thank you for staying with us . . . do come again]");
                 break;
             }
             _ => println!("Unrecognized command"),
