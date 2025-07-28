@@ -53,11 +53,17 @@ impl FeedbackLogger {
         println!("Enter rating (1-5):");
         let rating_str = read_input()?.trim().to_string();
         let rating = rating_str.parse::<u8>().map_err(|_e| {
-            io::Error::new(io::ErrorKind::InvalidInput, "Rating must be a number between 1 and 5")
+            io::Error::new(
+                io::ErrorKind::InvalidInput,
+                "Rating must be a number between 1 and 5",
+            )
         })?;
 
         if !(1..=5).contains(&rating) {
-            return Err(io::Error::new(io::ErrorKind::InvalidInput, "Rating must be between 1 and 5"));
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                "Rating must be between 1 and 5",
+            ));
         }
 
         let feedback = Feedback {
@@ -91,9 +97,9 @@ impl FeedbackLogger {
     fn remove_feedback(&mut self) -> io::Result<()> {
         println!("Enter feedback ID to remove:");
         let id_str = read_input()?.trim().to_string();
-        let id = id_str.parse::<u32>().map_err(|_e| {
-            io::Error::new(io::ErrorKind::InvalidInput, "ID must be a number")
-        })?;
+        let id = id_str
+            .parse::<u32>()
+            .map_err(|_e| io::Error::new(io::ErrorKind::InvalidInput, "ID must be a number"))?;
 
         match self.feedback_map.remove(&id) {
             Some(_) => println!("Feedback with ID {} removed successfully!", id),
@@ -105,9 +111,9 @@ impl FeedbackLogger {
     fn edit_feedback(&mut self) -> io::Result<()> {
         println!("Enter feedback ID to edit:");
         let id_str = read_input()?.trim().to_string();
-        let id = id_str.parse::<u32>().map_err(|_e| {
-            io::Error::new(io::ErrorKind::InvalidInput, "ID must be a number")
-        })?;
+        let id = id_str
+            .parse::<u32>()
+            .map_err(|_e| io::Error::new(io::ErrorKind::InvalidInput, "ID must be a number"))?;
 
         if let Some(feedback) = self.feedback_map.get_mut(&id) {
             println!("Current feedback details:");
@@ -141,7 +147,10 @@ impl FeedbackLogger {
                     io::Error::new(io::ErrorKind::InvalidInput, "Rating must be a number")
                 })?;
                 if !(1..=5).contains(&rating) {
-                    return Err(io::Error::new(io::ErrorKind::InvalidInput, "Rating must be between 1 and 5"));
+                    return Err(io::Error::new(
+                        io::ErrorKind::InvalidInput,
+                        "Rating must be between 1 and 5",
+                    ));
                 }
                 rating
             };
