@@ -81,6 +81,11 @@ impl Todolist {
         false
     }
 
+    pub fn get_todo(env: &Env, id: u32) -> Todo {
+        let todos = Self::get_todos(env);
+        todos.into_iter().find(|todo| todo.id == id).unwrap()
+    }
+
     pub fn get_todos(env: &Env) -> Vec<Todo> {
         env.storage()
             .persistent()

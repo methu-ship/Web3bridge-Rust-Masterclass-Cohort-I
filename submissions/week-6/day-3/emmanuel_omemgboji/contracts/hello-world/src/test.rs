@@ -13,7 +13,7 @@ fn setup() -> (Env, TodolistClient<'static>) {
 }
 
 #[test]
-fn test() {
+fn test_create_todo() {
     let (env, client) = setup();
 
     let title = String::from_str(&env, "Workout");
@@ -82,6 +82,44 @@ fn test_complete_todo() {
 
     assert!(is_completed);
     assert!(all_todo.get(0).unwrap().status);
+}
+
+#[test]
+fn test_get_todos() {
+    let (env, client) = setup();
+
+    let title1 = String::from_str(&env, "Cooking");
+    let description1 = String::from_str(&env, "Cook something delicious");
+
+    let title2 = String::from_str(&env, "Grocery Shopping");
+    let description2 = String::from_str(&env, "Buy vegetables and fruits");
+
+    let all_todo = client.get_todos();
+    assert_eq!(all_todo.len(), 0);
+
+    client.create_todo(&title1, &description1);
+    client.create_todo(&title2, &description2);
+
+    let all_todo = client.get_todos();
+
+    assert_eq!(all_todo.len(), 2);
+}
+
+#[test]
+fn test_get_todo() {
+    let (env, client) = setup();
+
+    let title = String::from_str(&env, "Workout");
+    let description = String::from_str(&env, "Morning exercise routine");
+
+    let todo = client.create_todo(&title, &description);
+
+    let todo = client.get_todo(&todo.id);
+
+    assert_eq!(todo.id, todo.id);
+    assert_eq!(todo.title, title);
+    assert_eq!(todo.description, description);
+    assert_eq!(todo.status, false);
 }
 
 #[test]
