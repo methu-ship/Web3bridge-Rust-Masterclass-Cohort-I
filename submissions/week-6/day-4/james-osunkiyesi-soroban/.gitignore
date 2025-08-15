@@ -6,3 +6,4 @@ target
 .stellar
 
 contracts/sep-41-token/src/lib-new.rs
+contracts/sep-41-token/test_snapshot/
