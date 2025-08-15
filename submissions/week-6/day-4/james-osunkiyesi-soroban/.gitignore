@@ -1,0 +1,8 @@
+# Rust's output directory
+target
+
+# Local settings
+.soroban
+.stellar
+
+contracts/sep-41-token/src/lib-new.rs
