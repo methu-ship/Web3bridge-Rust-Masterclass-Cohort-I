@@ -12,6 +12,12 @@ pub struct Todo {
     pub status: bool,
 }
 
+#[contracttype]
+enum DataKey {
+    Todos,
+    NextID,
+}
+
 const TODOS: Symbol = symbol_short!("TOD0S");
 
 const NEXT_ID: Symbol = symbol_short!("NEXT_ID");
@@ -110,5 +116,18 @@ impl Todolist {
             .persistent()
             .get(&TODOS)
             .unwrap_or(Vec::new(env))
+    }
+
+    pub fn get_todos_enum(env: &Env) -> Vec<Todo> {
+        env.storage()
+            .persistent()
+            .get(&DataKey::Todos)
+            .unwrap_or(Vec::new(env))
+    }
+    pub fn get_id_enum(env: &Env) -> u32 {
+        env.storage()
+            .persistent()
+            .get(&DataKey::NextID)
+            .unwrap_or(0)
     }
 }
