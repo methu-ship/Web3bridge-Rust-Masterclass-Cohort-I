@@ -51,7 +51,10 @@ impl TokenInterface for Sep41Token {
         if amount > 0 && expiration_ledger < env.ledger().sequence() {
             panic_with_error!(env, TokenError::ExpiredAllowance);
         }
-        let allowance = AllowanceData { amount, expiration_ledger };
+        let allowance = AllowanceData {
+            amount,
+            expiration_ledger,
+        };
         Storage::set_allowance(&env, &from, &spender, allowance);
         Events::approve(&env, &from, &spender, amount, expiration_ledger);
     }
@@ -92,10 +95,15 @@ impl TokenInterface for Sep41Token {
         if allowance == amount {
             Storage::remove_allowance(&env, &from, &spender);
         } else {
-            Storage::set_allowance(&env, &from, &spender, AllowanceData {
-                amount: allowance - amount,
-                expiration_ledger: env.ledger().sequence(),
-            });
+            Storage::set_allowance(
+                &env,
+                &from,
+                &spender,
+                AllowanceData {
+                    amount: allowance - amount,
+                    expiration_ledger: env.ledger().sequence(),
+                },
+            );
         }
         Events::transfer(&env, &from, &to, amount);
     }
@@ -116,3 +124,66 @@ impl TokenInterface for Sep41Token {
         Storage::set_balance(&env, &from, from_balance - amount);
         Events::burn(&env, &from, amount);
     }
+
+    fn burn_from(env: Env, spender: Address, from: Address, amount: i128) {
+        spender.require_auth();
+        let admin = Storage::get_admin(&env).expect("Admin not set");
+        if spender != admin {
+            panic_with_error!(env, TokenError::Unauthorized);
+        }
+        if amount < 0 {
+            panic_with_error!(env, TokenError::NegativeAmount);
+        }
+        let allowance = Self::allowance(env.clone(), from.clone(), spender.clone());
+        if allowance < amount {
+            panic_with_error!(env, TokenError::InsufficientAllowance);
+        }
+        let from_balance = Storage::get_balance(&env, &from);
+        if from_balance < amount {
+            panic_with_error!(env, TokenError::InsufficientBalance);
+        }
+        Storage::set_balance(&env, &from, from_balance - amount);
+        if allowance == amount {
+            Storage::remove_allowance(&env, &from, &spender);
+        } else {
+            Storage::set_allowance(
+                &env,
+                &from,
+                &spender,
+                AllowanceData {
+                    amount: allowance - amount,
+                    expiration_ledger: env.ledger().sequence(),
+                },
+            );
+        }
+        Events::burn(&env, &from, amount);
+    }
+
+    fn decimals(env: Env) -> u32 {
+        Storage::get_metadata(&env)
+            .map(|m| m.0)
+            .expect("Metadata not set")
+    }
+
+    fn name(env: Env) -> String {
+        Storage::get_metadata(&env)
+            .map(|m| m.1)
+            .expect("Metadata not set")
+    }
+
+    fn symbol(env: Env) -> String {
+        Storage::get_metadata(&env)
+            .map(|m| m.2)
+            .expect("Metadata not set")
+    }
+
+    fn mint(env: Env, to: Address, amount: i128) {
+        let admin = Storage::get_admin(&env).expect("Admin not set");
+        admin.require_auth();
+        if amount < 0 {
+            panic_with_error!(env, TokenError::NegativeAmount);
+        }
+        Storage::set_balance(&env, &to, Storage::get_balance(&env, &to) + amount);
+        Events::transfer(&env, &admin, &to, amount);
+    }
+}
