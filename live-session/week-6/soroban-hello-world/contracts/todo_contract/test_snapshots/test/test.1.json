@@ -23,7 +23,11 @@
           "contract_data": {
             "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
             "key": {
-              "symbol": "NEXT_ID"
+              "vec": [
+                {
+                  "symbol": "NextID"
+                }
+              ]
             },
             "durability": "persistent"
           }
@@ -36,7 +40,11 @@
                 "ext": "v0",
                 "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
                 "key": {
-                  "symbol": "NEXT_ID"
+                  "vec": [
+                    {
+                      "symbol": "NextID"
+                    }
+                  ]
                 },
                 "durability": "persistent",
                 "val": {
@@ -54,7 +62,11 @@
           "contract_data": {
             "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
             "key": {
-              "symbol": "TOD0S"
+              "vec": [
+                {
+                  "symbol": "Todos"
+                }
+              ]
             },
             "durability": "persistent"
           }
@@ -67,7 +79,11 @@
                 "ext": "v0",
                 "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2KM",
                 "key": {
-                  "symbol": "TOD0S"
+                  "vec": [
+                    {
+                      "symbol": "Todos"
+                    }
+                  ]
                 },
                 "durability": "persistent",
                 "val": {
