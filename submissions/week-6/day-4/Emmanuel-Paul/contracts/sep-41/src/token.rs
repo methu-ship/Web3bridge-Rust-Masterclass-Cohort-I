@@ -73,3 +73,46 @@ impl TokenInterface for Sep41Token {
         Storage::set_balance(&env, &to, Storage::get_balance(&env, &to) + amount);
         Events::transfer(&env, &from, &to, amount);
     }
+
+    fn transfer_from(env: Env, spender: Address, from: Address, to: Address, amount: i128) {
+        spender.require_auth();
+        if amount < 0 {
+            panic_with_error!(env, TokenError::NegativeAmount);
+        }
+        let allowance = Self::allowance(env.clone(), from.clone(), spender.clone());
+        if allowance < amount {
+            panic_with_error!(env, TokenError::InsufficientAllowance);
+        }
+        let from_balance = Storage::get_balance(&env, &from);
+        if from_balance < amount {
+            panic_with_error!(env, TokenError::InsufficientBalance);
+        }
+        Storage::set_balance(&env, &from, from_balance - amount);
+        Storage::set_balance(&env, &to, Storage::get_balance(&env, &to) + amount);
+        if allowance == amount {
+            Storage::remove_allowance(&env, &from, &spender);
+        } else {
+            Storage::set_allowance(&env, &from, &spender, AllowanceData {
+                amount: allowance - amount,
+                expiration_ledger: env.ledger().sequence(),
+            });
+        }
+        Events::transfer(&env, &from, &to, amount);
+    }
+
+    fn burn(env: Env, from: Address, amount: i128) {
+        from.require_auth();
+        let admin = Storage::get_admin(&env).expect("Admin not set");
+        if from != admin {
+            panic_with_error!(env, TokenError::Unauthorized);
+        }
+        if amount < 0 {
+            panic_with_error!(env, TokenError::NegativeAmount);
+        }
+        let from_balance = Storage::get_balance(&env, &from);
+        if from_balance < amount {
+            panic_with_error!(env, TokenError::InsufficientBalance);
+        }
+        Storage::set_balance(&env, &from, from_balance - amount);
+        Events::burn(&env, &from, amount);
+    }
