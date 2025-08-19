@@ -1,4 +1,4 @@
-use soroban_sdk::{symbol_short, Address, Env, String};
+use soroban_sdk::{symbol_short, Address, Env};
 
 pub struct Events;
 

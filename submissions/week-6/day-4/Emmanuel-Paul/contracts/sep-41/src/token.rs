@@ -1,6 +1,7 @@
 use crate::errors::TokenError;
+use crate::events::Events;
 use crate::storage::{AllowanceData, Storage};
-use soroban_sdk::{contract, contractimpl, symbol_short, Address, Env, String};
+use soroban_sdk::{contract, contractimpl, panic_with_error, Address, Env, String};
 
 pub trait TokenInterface {
     fn allowance(env: Env, from: Address, spender: Address) -> i128;
